@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.env
+*.venv
+.env/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+test.ipynb
+
+# MLflow
+mlruns/
+
+# Logs and artifacts
+logs/
+artifacts/
+
+# Docker
+docker-compose.override.yml
