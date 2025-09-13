@@ -1,6 +1,7 @@
-from datetime import datetime
 import json
 import os
+from datetime import datetime
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -11,14 +12,7 @@ def load_text(
     save_article_path: str = "artifacts/article.txt",  # артефакт с метаданными
     timeout: int = 10,
 ) -> str:
-    """
-    Загружает страницу по url, сохраняет raw HTML и текст статьи.
-    Дополнительно сохраняет:
-      - cleaned_article.txt (основной текст без мусора)
-      - uncertain_data.txt (короткие строки/мусор)
-      - article.txt (текст + метаданные)
-    Возвращает article_text (str).
-    """
+
     os.makedirs(os.path.dirname(save_html_path) or ".", exist_ok=True)
     os.makedirs(os.path.dirname(save_text_path) or ".", exist_ok=True)
     os.makedirs(os.path.dirname(save_article_path) or ".", exist_ok=True)
@@ -53,9 +47,9 @@ def load_text(
     # Create metadata
     metadata = {
         "url": url,
-        "language": "ru",  # можно позже автоматизировать определение
+        "language": "ru",  
         "date": datetime.now().isoformat(),
-        "topic": lines[0] if lines else "",  # можно взять первый заголовок
+        "topic": lines[0] if lines else "",  
     }
 
     # Save article with metadata
