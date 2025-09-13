@@ -5,6 +5,10 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_experimental.text_splitter import SemanticChunker
+from langchain_community.embeddings import HuggingFaceEmbeddings
+
 def load_text(
     url: str,
     save_html_path: str = "artifacts/article.html",
@@ -62,3 +66,42 @@ def load_text(
 
     return article_text
 
+
+
+def chunk_text(text: str, chunk_size: int = 512, chunk_overlap: int = 50, semantic: bool = True):
+
+    if semantic:
+        # Семантическое чанкирование
+        embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+        semantic_splitter = SemanticChunker(embeddings)
+        chunks = semantic_splitter.split_text(text)
+    else:
+        # Базовое чанкирование (по символам/токенам)
+        basic_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap,
+            length_function=len,
+        )
+        chunks = basic_splitter.split_text(text)
+
+    return chunks
+
+
+def save_chunks_to_jsonl(chunks, rag_file_path="artifacts/rag_article.jsonl"):
+    """
+    Сохраняет чанки в JSONL файл с метаданными.
+    """
+    os.makedirs(os.path.dirname(rag_file_path), exist_ok=True)
+
+    with open(rag_file_path, "w", encoding="utf-8") as f:
+        for i, chunk in enumerate(chunks):
+            item = {
+                "id": i,
+                "text": chunk,
+                "topic": "UX",
+                "project": "dzencode",
+                "lang": "ru"
+            }
+            f.write(json.dumps(item, ensure_ascii=False) + "\n")
+
+    print(f"✅ RAG-файл сохранён: {rag_file_path}")
