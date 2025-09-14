@@ -68,7 +68,15 @@ def load_text(
 
 
 
-def chunk_text(text: str, chunk_size: int = 512, chunk_overlap: int = 50, semantic: bool = True):
+def chunk_text(
+    text: str,
+    chunk_size: int = 512,
+    chunk_overlap: int = 50,
+    semantic: bool = True,
+    topic: str = "UX",
+    project: str = "dzencode",
+    lang: str = "ru"
+) -> list[dict]:
 
     if semantic:
         # Семантическое чанкирование
@@ -84,24 +92,27 @@ def chunk_text(text: str, chunk_size: int = 512, chunk_overlap: int = 50, semant
         )
         chunks = basic_splitter.split_text(text)
 
-    return chunks
+    # Преобразуем в список словарей
+    chunk_dicts = [
+        {
+            "id": i,
+            "text": chunk,
+            "topic": topic,
+            "project": project,
+            "lang": lang,
+        }
+        for i, chunk in enumerate(chunks)
+    ]
+
+    return chunk_dicts
 
 
-def save_chunks_to_jsonl(chunks, rag_file_path="artifacts/rag_article.jsonl"):
-    """
-    Сохраняет чанки в JSONL файл с метаданными.
-    """
+def save_chunks_to_jsonl(chunks: list[dict], rag_file_path: str = "artifacts/rag_article.jsonl"):
+ 
     os.makedirs(os.path.dirname(rag_file_path), exist_ok=True)
 
     with open(rag_file_path, "w", encoding="utf-8") as f:
-        for i, chunk in enumerate(chunks):
-            item = {
-                "id": i,
-                "text": chunk,
-                "topic": "UX",
-                "project": "dzencode",
-                "lang": "ru"
-            }
-            f.write(json.dumps(item, ensure_ascii=False) + "\n")
+        for chunk in chunks:
+            f.write(json.dumps(chunk, ensure_ascii=False) + "\n")
 
     print(f"✅ RAG-файл сохранён: {rag_file_path}")
