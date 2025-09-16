@@ -2,12 +2,13 @@ import os
 import json
 import hashlib
 from datetime import datetime
-from dotenv import load_dotenv
 
+from dotenv import load_dotenv
 import requests
 from qdrant_client import QdrantClient
-from qdrant_client.models import VectorParams, Distance, PointStruct
+from qdrant_client.http.models import Distance, VectorParams, PointStruct
 from sentence_transformers import SentenceTransformer
+
 
 
 def build_rag_index(
@@ -19,10 +20,11 @@ def build_rag_index(
     
     client = QdrantClient(host=host, port=port)
     vector_size = len(chunks[0]["embedding"])
-    client.recreate_collection(
-        collection_name=collection_name,
-        vectors_config=VectorParams(size=vector_size, distance=Distance.COSINE),
-    )
+    if not client.collection_exists(collection_name):
+        client.create_collection(
+            collection_name=collection_name,
+            vectors_config=VectorParams(size=vector_size, distance=Distance.COSINE),
+        )
     points = [
         PointStruct(
             id=chunk["id"],
@@ -57,13 +59,13 @@ def answer_query(
     query_vector = query_model.encode([query])[0]
     collection_name = "dzencode_articles"
 
-    result = client.search(
+    result = client.query_points(
         collection_name=collection_name,
-        query_vector=query_vector,
+        query=query_vector.tolist(),
         limit=top_k
     )
 
-    answer = " ".join([hit.payload["text"] for hit in result])
+    answer = " ".join([hit.payload["text"] for hit in result.points])
     return answer
 
 
