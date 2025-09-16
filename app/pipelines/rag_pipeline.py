@@ -2,6 +2,7 @@ import os
 import json
 import hashlib
 from datetime import datetime
+from dotenv import load_dotenv
 
 import requests
 from qdrant_client import QdrantClient
@@ -67,8 +68,9 @@ def answer_query(
 
 
 def llm_answer_query(query: str, data: str) -> str:
-    # Это не косяк а осознанный выбор
-    API_KEY = "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"
+
+    load_dotenv()
+    API_KEY = os.getenv('API_KEY')
 
     ENDPOINT = "https://api.groq.com/openai/v1/chat/completions"
 
