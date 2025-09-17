@@ -1,0 +1,18 @@
+{
+  "versions": [
+    {
+      "timestamp": "2025-09-15 22:27:45.676522",
+      "rag_file": "artifacts/rag_article.jsonl",
+      "file_size": 344872,
+      "file_hash": "ceea30c47b3d6b0521b7f12ba98beac0",
+      "version_id": "v1"
+    },
+    {
+      "timestamp": "2025-09-17 09:45:31.642156",
+      "rag_file": "artifacts/rag_article.jsonl",
+      "file_size": 652621,
+      "file_hash": "4092c22c96f0e6eccb64b1eab6d11e47",
+      "version_id": "v2"
+    }
+  ]
+}
