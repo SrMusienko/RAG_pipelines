@@ -15,9 +15,6 @@ test.ipynb
 # MLflow
 mlruns/
 
-# Logs and artifacts
-logs/
-artifacts/
-
 # Docker
 docker-compose.override.yml
+qdrant_storage/
